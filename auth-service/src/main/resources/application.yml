@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: Auth Service
+
+keycloak:
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL}
+  realm: ecommerce
+  client-id: auth-service
+  client-secret: ${KEYCLOAK_AUTH_SERVICE_SECRET}
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+server:
+  port: 8585

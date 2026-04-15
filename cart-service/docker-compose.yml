@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7.2
+    container_name: cart-dev-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - ecommerce-network
+
+volumes:
+  redis_data:
+
+networks:
+  ecommerce-network:
+    external: true

@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: E-commerce API Gateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/ecommerce
+  cloud:
+    gateway:
+      httpclient:
+        connect-timeout: 2000
+        response-timeout: 5s
+      default-filters:
+        - RemoveRequestHeader=Cookie
+      routes:
+        - id: customer-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/v1/customers/**,/api/v1/addresses/**
+
+        - id: product-service
+          uri: http://localhost:8181
+          predicates:
+            - Path=/api/v1/products/**,/api/v1/categories/**
+
+        - id: cart-service
+          uri: http://localhost:8282
+          predicates:
+            - Path=/api/v1/cart/**
+
+        - id: order-service
+          uri: http://localhost:8383
+          predicates:
+            - Path=/api/v1/orders/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
+
+info:
+  app:
+    name: api-gateway
+    version: 1.0.0
+
+server:
+  port: 8484
