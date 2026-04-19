@@ -45,35 +45,31 @@ public class ProductUseCaseImpl implements ProductUseCase {
 
     @Override
     @Transactional
-    public ProductResponseDTO create(ProductCreateDTO productCreateDTO) throws IOException {
-        logger.debug(
-                "Starting product creation. Product name='{}', Category id='{}'",
-                productCreateDTO.name(),
-                productCreateDTO.categoryId()
-        );
-        Product product = productMapper.toEntity(productCreateDTO);
+    public ProductResponseDTO create(ProductCreateDTO createDTO) throws IOException {
+        logger.info("[CreateProduct] Starting product creation");
+        Product product = productMapper.toEntity(createDTO);
         productValidator.validateOnCreateAndUpdate(product);
-        String imageUrl = imageStorageService.save(productCreateDTO.image());
+        String imageUrl = imageStorageService.save(createDTO.image());
         logger.debug("Image saved successfully. Generated URL='{}'", imageUrl);
         product.setImageUrl(imageUrl);
         Product createdProduct = productService.save(product);
+        logger.info("[CreateCategory] ProductId='{}' successfully created", createdProduct.getId());
         return productMapper.toDTO(createdProduct);
     }
 
     @Override
     @Transactional(readOnly = true)
     public ProductResponseDTO findById(Long productId) {
-        logger.debug("Find product by id='{}'", productId);
+        logger.info("[FindById] Starting find productId='{}'", productId);
         Product product = productService.findById(productId);
+        logger.info("[FindById] ProductId='{}' found successfully", product.getId());
         return productMapper.toDTO(product);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<ProductResponseDTO> getByFilter(ProductFilterDTO productFilterDTO, Integer page, Integer pageSize) {
-        logger.debug("Starting product filtering. Filters='{}', page='{}', pageSize='{}'",
-                productFilterDTO, page, pageSize);
-        Specification<Product> specs = createSpecification(productFilterDTO);
+    public PageResponse<ProductResponseDTO> getByFilter(ProductFilterDTO filter, Integer page, Integer pageSize) {
+        Specification<Product> specs = createSpecification(filter);
         Pageable pagination = pagination(page, pageSize);
         Page<Product> result = productService.findAll(specs, pagination);
         return pageMapper.toPageResponse(result, productMapper::toDTO);
@@ -85,25 +81,23 @@ public class ProductUseCaseImpl implements ProductUseCase {
 
     @Override
     @Transactional
-    public ProductResponseDTO update(Long productId, ProductUpdateDTO productUpdateDTO) throws IOException {
-        logger.debug("Starting update of product id='{}'", productId);
+    public ProductResponseDTO update(Long productId, ProductUpdateDTO updateDTO) throws IOException {
+        logger.info("[UpdateProduct] Starting product updation");
         Product product = productService.findById(productId);
-        logger.debug("Product found: id='{}', current name='{}'", product.getId(), product.getName());
         productValidator.validateOnCreateAndUpdate(product);
-        logger.debug("Applying updates from DTO to product...");
-        productMapper.update(product, productUpdateDTO);
+        productMapper.update(product, updateDTO);
         Product updatedProduct = productService.save(product);
+        logger.info("[UpdateProduct] ProductId='{}' successfully updated", updatedProduct.getId());
         return productMapper.toDTO(updatedProduct);
     }
 
     @Override
     @Transactional
     public void delete(Long productId) throws IOException {
-        logger.debug("Starting deletion of product id='{}'", productId);
+        logger.debug("[DeleteProduct] Starting product deletion");
         Product product = productService.findById(productId);
-        logger.debug("Product found for deletion: id='{}', name='{}'", product.getId(), product.getName());
-        logger.debug("Deleting image file='{}'", product.getImageUrl());
         imageStorageService.delete(product.getImageUrl());
         productService.delete(product);
+        logger.info("[DeleteProduct] ProductId='{}' successfully deleted", productId);
     }
 }

@@ -2,7 +2,7 @@ package io.github.gabrielvelosoo.productservice.integration.infrastructure.persi
 
 import io.github.gabrielvelosoo.productservice.domain.entity.Category;
 import io.github.gabrielvelosoo.productservice.infrastructure.persistence.repository.CategoryRepository;
-import io.github.gabrielvelosoo.productservice.integration.configuration.AbstractIT;
+import io.github.gabrielvelosoo.productservice.integration.configuration.AbstractIntegrationTest;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class CategoryRepositoryIT extends AbstractIT {
+class CategoryRepositoryIT extends AbstractIntegrationTest {
 
     @Autowired
     CategoryRepository categoryRepository;

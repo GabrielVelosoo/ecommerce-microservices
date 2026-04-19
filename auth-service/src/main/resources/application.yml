@@ -1,12 +1,27 @@
 spring:
   application:
     name: Auth Service
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
 
 keycloak:
   auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL}
   realm: ecommerce
   client-id: auth-service
   client-secret: ${KEYCLOAK_AUTH_SERVICE_SECRET}
+
+app:
+  crypto:
+    key: ${REGISTRATION_CRYPTO_KEY}
+  mail:
+    brevo:
+      from: noreplyecommerceservice@gmail.com
+      api-key: ${BREVO_API_KEY}
+  otp:
+    ttl-minutes: 5
+    max-sends-per-hour: 5
 
 logging:
   level:

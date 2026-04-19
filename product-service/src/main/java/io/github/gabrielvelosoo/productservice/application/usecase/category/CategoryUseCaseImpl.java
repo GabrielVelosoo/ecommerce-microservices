@@ -30,14 +30,11 @@ public class CategoryUseCaseImpl implements CategoryUseCase {
 
     @Override
     @Transactional
-    public CategoryResponseDTO create(CategoryRequestDTO categoryRequestDTO) {
-        logger.debug("Starting category creation. Name='{}', ParentId='{}'",
-                categoryRequestDTO.name(),
-                categoryRequestDTO.parentCategoryId()
-        );
-        Category category = categoryMapper.toEntity(categoryRequestDTO);
-        if(categoryRequestDTO.parentCategoryId() != null) {
-            Long parentId = categoryRequestDTO.parentCategoryId();
+    public CategoryResponseDTO create(CategoryRequestDTO request) {
+        logger.info("[CreateCategory] Starting category creation");
+        Category category = categoryMapper.toEntity(request);
+        if(request.parentCategoryId() != null) {
+            Long parentId = request.parentCategoryId();
             logger.debug("Looking up parent category with id='{}'", parentId);
             Category parent = categoryService.findById(parentId);
             logger.debug("Parent category resolved: id='{}', name='{}'", parent.getId(), parent.getName());
@@ -46,13 +43,13 @@ public class CategoryUseCaseImpl implements CategoryUseCase {
         categoryValidator.validateOnCreate(category);
         category.initialize();
         Category createdCategory = categoryService.save(category);
+        logger.info("[CreateCategory] Category='{}' successfully created", createdCategory.getName());
         return categoryMapper.toDTO(createdCategory);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<CategoryResponseDTO> getRootCategories() {
-        logger.debug("Getting root categories");
         List<Category> result = categoryService.getParentlessCategories();
         return categoryMapper.toDTOs(result);
     }
@@ -60,10 +57,10 @@ public class CategoryUseCaseImpl implements CategoryUseCase {
     @Override
     @Transactional
     public void delete(Long categoryId) {
+        logger.info("[CreateCategory] Starting category deletion. categoryId='{}'", categoryId);
         Category category = categoryService.findById(categoryId);
-        logger.debug("Category found: id='{}', name='{}'", category.getId(), category.getName());
         categoryValidator.validateOnDelete(category);
-        logger.debug("Deleting category='{}' id='{}'", category.getName(), category.getId());
+        logger.info("[CreateCategory] CategoryId='{}' successfully deleted", categoryId);
         categoryService.delete(category);
     }
 }

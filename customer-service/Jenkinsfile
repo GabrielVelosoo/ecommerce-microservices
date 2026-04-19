@@ -1,0 +1,34 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'maven-3.9'
+        jdk 'jdk-21'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build & Unit Tests') {
+            steps {
+                sh 'mvn clean test'
+            }
+        }
+    }
+
+    post {
+        always {
+            junit '**/target/surefire-reports/*.xml'
+        }
+        failure {
+            echo '❌ Build falhou — verifique os testes'
+        }
+        success {
+            echo '✅ Build e testes unitários executados com sucesso'
+        }
+    }
+}

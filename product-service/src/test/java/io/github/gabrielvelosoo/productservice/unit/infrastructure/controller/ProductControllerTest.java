@@ -8,7 +8,7 @@ import io.github.gabrielvelosoo.productservice.application.dto.product.ProductFi
 import io.github.gabrielvelosoo.productservice.application.dto.product.ProductResponseDTO;
 import io.github.gabrielvelosoo.productservice.application.dto.product.ProductUpdateDTO;
 import io.github.gabrielvelosoo.productservice.application.usecase.product.ProductUseCase;
-import io.github.gabrielvelosoo.productservice.infrastructure.controller.ProductController;
+import io.github.gabrielvelosoo.productservice.infrastructure.controller.product.ProductController;
 import io.github.gabrielvelosoo.productservice.infrastructure.exception.handler.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

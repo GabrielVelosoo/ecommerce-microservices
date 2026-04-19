@@ -3,10 +3,12 @@ package io.github.gabrielvelosoo.authservice;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 @SpringBootApplication
+@ConfigurationPropertiesScan
 public class AuthServiceApplication {
 
     public static void main(String[] args) {

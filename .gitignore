@@ -1,0 +1,45 @@
+HELP.md
+
+### Java / Build ###
+target/
+build/
+*.log
+*.class
+
+### Maven wrapper ###
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Environment variables docker-compose ###
+/infrastructure/.env
+
+### Images of application (Product Service) ###
+/product-service/uploads/

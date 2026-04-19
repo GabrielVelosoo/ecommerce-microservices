@@ -3,9 +3,7 @@ package io.github.gabrielvelosoo.productservice.infrastructure.service;
 import io.github.gabrielvelosoo.productservice.domain.entity.Product;
 import io.github.gabrielvelosoo.productservice.infrastructure.persistence.repository.ProductRepository;
 import io.github.gabrielvelosoo.productservice.domain.service.ProductService;
-import io.github.gabrielvelosoo.productservice.infrastructure.exception.RecordNotFoundException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import io.github.gabrielvelosoo.productservice.application.exception.RecordNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -13,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-
-    private static final Logger logger = LogManager.getLogger(ProductServiceImpl.class);
 
     private final ProductRepository productRepository;
 
@@ -29,12 +25,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product findById(Long id) {
-        logger.debug("Searching for product id='{}'", id);
         return productRepository.findById(id)
-                .orElseThrow( () -> {
-                    logger.warn("Product not found id='{}'", id);
-                    return new RecordNotFoundException("Product not found");
-                } );
+                .orElseThrow(() -> new RecordNotFoundException("Product not found"));
     }
 
     @Override

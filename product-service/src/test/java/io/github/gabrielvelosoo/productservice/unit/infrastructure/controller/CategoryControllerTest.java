@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.gabrielvelosoo.productservice.application.dto.category.CategoryRequestDTO;
 import io.github.gabrielvelosoo.productservice.application.dto.category.CategoryResponseDTO;
 import io.github.gabrielvelosoo.productservice.application.usecase.category.CategoryUseCase;
-import io.github.gabrielvelosoo.productservice.infrastructure.controller.CategoryController;
+import io.github.gabrielvelosoo.productservice.infrastructure.controller.category.CategoryController;
 import io.github.gabrielvelosoo.productservice.infrastructure.exception.handler.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

@@ -1,0 +1,95 @@
+version: "3.9"
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts-jdk21
+    container_name: jenkins
+    user: root
+    ports:
+      - "8082:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+
+  customer-service:
+    image: customer-service:latest
+    container_name: ecommerce-customer-service
+    environment:
+      DATASOURCE_URL: ${CUSTOMER_DATASOURCE_URL}
+      DATASOURCE_USER: ${CUSTOMER_DATASOURCE_USER}
+      DATASOURCE_PASSWORD: ${CUSTOMER_DATASOURCE_PASSWORD}
+      KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI}
+      RABBITMQ_HOST: rabbitmq
+      KEYCLOAK_AUTH_SERVER_URL: ${KEYCLOAK_AUTH_SERVER_URL}
+      CLIENT_SECRET: ${CUSTOMER_SERVICE_CLIENT_SECRET}
+    ports:
+      - "8081:8081"
+    networks:
+      - ecommerce-network
+
+  product-service:
+    image: product-service:latest
+    container_name: ecommerce-product-service
+    environment:
+      DATASOURCE_URL: ${PRODUCT_DATASOURCE_URL}
+      DATASOURCE_USER: ${PRODUCT_DATASOURCE_USER}
+      DATASOURCE_PASSWORD: ${PRODUCT_DATASOURCE_PASSWORD}
+      KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI}
+      KAFKA_BOOTSTRAP_SERVER: ${KAFKA_BOOTSTRAP_SERVER}
+    ports:
+      - "8181:8181"
+    networks:
+      - ecommerce-network
+
+  cart-service:
+    image: cart-service:latest
+    container_name: ecommerce-cart-service
+    environment:
+      REDIS_HOST: redis
+      KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI}
+      PRODUCT_SERVICE_URL: http://product-service:8181
+      ORDER_SERVICE_URL: http://order-service:8383
+      KEYCLOAK_TOKEN_URL: http://keycloak.local:8080/realms/ecommerce/protocol/openid-connect/token
+      CLIENT_SECRET: ${CART_SERVICE_CLIENT_SECRET}
+    ports:
+      - "8282:8282"
+    networks:
+      - ecommerce-network
+
+  order-service:
+    image: order-service:latest
+    container_name: ecommerce-order-service
+    environment:
+      DATASOURCE_URL: ${ORDER_DATASOURCE_URL}
+      DATASOURCE_USER: ${ORDER_DATASOURCE_USER}
+      DATASOURCE_PASSWORD: ${ORDER_DATASOURCE_PASSWORD}
+      KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI}
+      KAFKA_BOOTSTRAP_SERVER: ${KAFKA_BOOTSTRAP_SERVER}
+    ports:
+      - "8383:8383"
+    networks:
+      - ecommerce-network
+
+  api-gateway:
+    image: api-gateway:latest
+    container_name: ecommerce-api-gateway
+    environment:
+      KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI}
+      CUSTOMER_SERVICE_URL: http://customer-service:8081
+      PRODUCT_SERVICE_URL: http://product-service:8181
+      CART_SERVICE_URL: http://cart-service:8282
+      ORDER_SERVICE_URL: http://order-service:8383
+    ports:
+      - "8484:8484"
+    networks:
+      - ecommerce-network
+
+volumes:
+  jenkins_home:
+
+networks:
+  ecommerce-network:
+    driver: bridge

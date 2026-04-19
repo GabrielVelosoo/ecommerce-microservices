@@ -1,0 +1,2 @@
+ALTER TABLE tb_order
+ADD COLUMN cancelled_at TIMESTAMP;

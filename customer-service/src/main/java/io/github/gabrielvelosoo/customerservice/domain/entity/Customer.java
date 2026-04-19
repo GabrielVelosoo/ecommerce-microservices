@@ -1,5 +1,6 @@
 package io.github.gabrielvelosoo.customerservice.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_customer")
@@ -28,10 +31,10 @@ public class Customer implements Serializable {
     @Column(name = "last_name", nullable = false, length = 100)
     private String lastName;
 
-    @Column(name = "keycloak_user_id", nullable = false)
+    @Column(name = "keycloak_user_id")
     private String keycloakUserId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
 
     @Column(nullable = false, unique = true, length = 11)
@@ -43,6 +46,10 @@ public class Customer implements Serializable {
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Address> addresses = new ArrayList<>();
+
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -50,4 +57,27 @@ public class Customer implements Serializable {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public Customer() {}
+
+    public Customer(Long id, String name, String lastName, String email, String cpf, String cep, LocalDate birthDate) {
+        this.id = id;
+        this.name = name;
+        this.lastName = lastName;
+        this.email = email;
+        this.cpf = cpf;
+        this.cep = cep;
+        this.birthDate = birthDate;
+    }
+
+    public Customer(Long id, String name, String lastName, String keycloakUserId, String email, String cpf, String cep, LocalDate birthDate) {
+        this.id = id;
+        this.name = name;
+        this.lastName = lastName;
+        this.keycloakUserId = keycloakUserId;
+        this.email = email;
+        this.cpf = cpf;
+        this.cep = cep;
+        this.birthDate = birthDate;
+    }
 }

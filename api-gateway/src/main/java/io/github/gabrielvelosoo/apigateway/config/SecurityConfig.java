@@ -25,19 +25,16 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(ex -> ex
                         .pathMatchers("/actuator/**").permitAll()
+                        .pathMatchers("/auth/**").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/v1/customers").permitAll()
-                        .pathMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
-                        .pathMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
-                        .pathMatchers(
-                                "/api/v1/customers/**",
-                                "/api/v1/categories/**",
-                                "/api/v1/products/**"
-                        ).hasRole("ADMIN")
-                        .pathMatchers(
-                                "/api/v1/addresses/**",
-                                "/api/v1/cart/**",
-                                "/api/v1/orders/**"
-                        ).hasAnyRole("USER", "ADMIN")
+                        .pathMatchers(HttpMethod.GET, "/api/v1/products/**", "/api/v1/categories/**").permitAll()
+                        .pathMatchers("/api/v1/customers/me/**").hasAnyRole("USER", "ADMIN")
+                        .pathMatchers("/api/v1/addresses/**").hasAnyRole("USER", "ADMIN")
+                        .pathMatchers("/api/v1/cart/**").hasAnyRole("USER", "ADMIN")
+                        .pathMatchers("/api/v1/orders/**").hasAnyRole("USER", "ADMIN")
+                        .pathMatchers("/api/v1/customers/**").hasRole("ADMIN")
+                        .pathMatchers("/api/v1/products/**").hasRole("ADMIN")
+                        .pathMatchers("/api/v1/categories/**").hasRole("ADMIN")
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->

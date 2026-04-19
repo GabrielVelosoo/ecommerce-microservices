@@ -1,12 +1,17 @@
 package io.github.gabrielvelosoo.customerservice.infrastructure.exception.handler;
 
-import io.github.gabrielvelosoo.customerservice.infrastructure.exception.DuplicateRecordException;
-import io.github.gabrielvelosoo.customerservice.infrastructure.exception.RecordNotFoundException;
+import io.github.gabrielvelosoo.customerservice.application.exception.BusinessRuleException;
+import io.github.gabrielvelosoo.customerservice.application.exception.DuplicateRecordException;
+import io.github.gabrielvelosoo.customerservice.infrastructure.exception.KeycloakException;
+import io.github.gabrielvelosoo.customerservice.application.exception.RecordNotFoundException;
 import io.github.gabrielvelosoo.customerservice.infrastructure.exception.model.ErrorResponse;
 import io.github.gabrielvelosoo.customerservice.infrastructure.exception.model.FieldError;
 import io.github.gabrielvelosoo.customerservice.infrastructure.exception.model.ValidationErrorResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -17,8 +22,11 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger logger = LogManager.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        logger.error(e.getMessage());
         int status = HttpStatus.UNPROCESSABLE_ENTITY.value();
         LocalDateTime timestamp = LocalDateTime.now();
         List<FieldError> errors = e.getBindingResult().getFieldErrors()
@@ -31,6 +39,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateRecordException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateRecordException(DuplicateRecordException e) {
+        logger.error(e.getMessage());
         int status = HttpStatus.CONFLICT.value();
         String message = e.getMessage();
         LocalDateTime timestamp = LocalDateTime.now();
@@ -44,12 +53,65 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RecordNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleRecordNotFoundException(RecordNotFoundException e) {
+        logger.error(e.getMessage());
         int status = HttpStatus.NOT_FOUND.value();
+        LocalDateTime timestamp = LocalDateTime.now();
+        ErrorResponse errorResponse = new ErrorResponse(
+                status,
+                "Record not found",
+                timestamp
+        );
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    @ExceptionHandler(KeycloakException.class)
+    public ResponseEntity<ErrorResponse> handleKeycloakException(KeycloakException e) {
+        logger.error("Keycloak operation failed", e);
+        int status = HttpStatus.INTERNAL_SERVER_ERROR.value();
+        LocalDateTime timestamp = LocalDateTime.now();
+        ErrorResponse errorResponse = new ErrorResponse(
+                status,
+                "An error occurred while processing Keycloak operation",
+                timestamp
+        );
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessRuleException(BusinessRuleException e) {
+        logger.error("Business rule error", e);
+        int status = HttpStatus.FORBIDDEN.value();
         String message = e.getMessage();
         LocalDateTime timestamp = LocalDateTime.now();
         ErrorResponse errorResponse = new ErrorResponse(
                 status,
                 message,
+                timestamp
+        );
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAuthorizationDeniedException(AuthorizationDeniedException e) {
+        logger.error("Authorization denied", e);
+        int status = HttpStatus.FORBIDDEN.value();
+        LocalDateTime timestamp = LocalDateTime.now();
+        ErrorResponse errorResponse = new ErrorResponse(
+                status,
+                "You do not have permission to access this resource",
+                timestamp
+        );
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleUnhandledErrorsException(RuntimeException e) {
+        logger.error("Unhandled exception: ", e);
+        int status = HttpStatus.INTERNAL_SERVER_ERROR.value();
+        LocalDateTime timestamp = LocalDateTime.now();
+        ErrorResponse errorResponse = new ErrorResponse(
+                status,
+                "Unhandled error, contact development",
                 timestamp
         );
         return ResponseEntity.status(status).body(errorResponse);

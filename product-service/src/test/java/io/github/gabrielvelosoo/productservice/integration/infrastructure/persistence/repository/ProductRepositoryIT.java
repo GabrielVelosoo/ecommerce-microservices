@@ -5,7 +5,7 @@ import io.github.gabrielvelosoo.productservice.domain.entity.Category;
 import io.github.gabrielvelosoo.productservice.domain.entity.Product;
 import io.github.gabrielvelosoo.productservice.infrastructure.persistence.repository.ProductRepository;
 import io.github.gabrielvelosoo.productservice.infrastructure.persistence.specification.ProductSpecification;
-import io.github.gabrielvelosoo.productservice.integration.configuration.AbstractIT;
+import io.github.gabrielvelosoo.productservice.integration.configuration.AbstractIntegrationTest;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class ProductRepositoryIT extends AbstractIT {
+class ProductRepositoryIT extends AbstractIntegrationTest {
 
     @Autowired
     ProductRepository productRepository;

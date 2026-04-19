@@ -4,13 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.gabrielvelosoo.productservice.application.dto.category.CategoryRequestDTO;
 import io.github.gabrielvelosoo.productservice.domain.entity.Category;
 import io.github.gabrielvelosoo.productservice.infrastructure.persistence.repository.CategoryRepository;
-import io.github.gabrielvelosoo.productservice.integration.configuration.AbstractIT;
+import io.github.gabrielvelosoo.productservice.integration.configuration.AbstractIntegrationTest;
+import io.github.gabrielvelosoo.productservice.integration.configuration.TestSecurityConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -23,7 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class CategoryControllerIT extends AbstractIT {
+@Import(TestSecurityConfig.class)
+class CategoryControllerIT extends AbstractIntegrationTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -46,7 +49,6 @@ class CategoryControllerIT extends AbstractIT {
     class CreateTests {
 
         @Test
-        @WithMockUser(roles = "ADMIN")
         void shouldCreateCategorySuccessfully() throws Exception {
             CategoryRequestDTO requestDTO = new CategoryRequestDTO("Books", null);
             mockMvc.perform(post("/api/v1/categories")
@@ -59,25 +61,6 @@ class CategoryControllerIT extends AbstractIT {
                     .andExpect(jsonPath("$.slug").value("books"))
                     .andExpect(jsonPath("$.subcategories").isArray())
                     .andExpect(jsonPath("$.subcategories").isEmpty());
-        }
-
-        @Test
-        @WithMockUser(roles = "USER")
-        void shouldReturnForbiddenWhenUserIsNotAdmin() throws Exception {
-            CategoryRequestDTO requestDTO = new CategoryRequestDTO("Books", null);
-            mockMvc.perform(post("/api/v1/categories")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(requestDTO)))
-                    .andExpect(status().isForbidden());
-        }
-
-        @Test
-        void shouldReturnUnauthorizedWhenNotAuthenticated() throws Exception {
-            CategoryRequestDTO requestDTO = new CategoryRequestDTO("Books", null);
-            mockMvc.perform(post("/api/v1/categories")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(requestDTO)))
-                    .andExpect(status().isUnauthorized());
         }
 
         @Test
@@ -126,21 +109,6 @@ class CategoryControllerIT extends AbstractIT {
             mockMvc.perform(delete("/api/v1/categories/{id}", category.getId()))
                     .andExpect(status().isNoContent());
             assertThat(categoryRepository.findById(category.getId())).isEmpty();
-        }
-
-        @Test
-        @WithMockUser(roles = "USER")
-        void shouldReturnForbiddenWhenUserIsNotAdmin() throws Exception {
-            Category category = persistCategory("Protected", null);
-            mockMvc.perform(delete("/api/v1/categories/{id}", category.getId()))
-                    .andExpect(status().isForbidden());
-        }
-
-        @Test
-        void shouldReturnUnauthorizedWhenNotAuthenticated() throws Exception {
-            Category category = persistCategory("Unauthorized", null);
-            mockMvc.perform(delete("/api/v1/categories", category.getId()))
-                    .andExpect(status().isUnauthorized());
         }
 
         @Test

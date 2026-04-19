@@ -1,5 +1,6 @@
 package io.github.gabrielvelosoo.productservice.domain.entity;
 
+import io.github.gabrielvelosoo.productservice.application.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -57,5 +58,22 @@ public class Product implements Serializable {
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.category = category;
+    }
+
+    public void decreaseStock(Integer quantity) {
+        if(quantity <= 0) {
+            throw new BusinessException("Quantity must be greater than zero");
+        }
+        if(this.stockQuantity < quantity) {
+            throw new BusinessException("Insufficient stock");
+        }
+        this.stockQuantity -= quantity;
+    }
+
+    public void increaseStock(Integer quantity) {
+        if(quantity <= 0) {
+            throw new BusinessException("Quantity must be greater than zero");
+        }
+        this.stockQuantity += quantity;
     }
 }

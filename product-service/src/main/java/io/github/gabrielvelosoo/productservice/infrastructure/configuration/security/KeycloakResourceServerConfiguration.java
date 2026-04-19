@@ -1,0 +1,66 @@
+package io.github.gabrielvelosoo.productservice.infrastructure.configuration.security;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+@Profile("!test")
+public class KeycloakResourceServerConfiguration {
+
+    @Bean
+    public SecurityFilterChain resourceServerFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/products",
+                                "/api/v1/categories"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/internal/products/**").hasRole("PRODUCT_READ")
+                        .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(rs ->
+                            rs.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter()))
+                        )
+                .build();
+    }
+
+    private Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthConverter() {
+        JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
+        jwtConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            Collection<GrantedAuthority> authorities = new ArrayList<>();
+            Map<String, Object> realmAccess = jwt.getClaim("realm_access");
+            if(realmAccess != null && realmAccess.get("roles") instanceof Collection<?> roles) {
+                authorities.addAll(
+                        roles.stream()
+                                .map(Objects::toString)
+                                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                                .toList()
+                );
+            }
+            return authorities;
+        });
+        return jwtConverter;
+    }
+}

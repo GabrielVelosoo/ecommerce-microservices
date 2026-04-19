@@ -2,42 +2,31 @@ package io.github.gabrielvelosoo.productservice.infrastructure.persistence.speci
 
 import io.github.gabrielvelosoo.productservice.application.dto.product.ProductFilterDTO;
 import io.github.gabrielvelosoo.productservice.domain.entity.Product;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 
 public class ProductSpecification {
 
-    private static final Logger logger = LogManager.getLogger(ProductSpecification.class);
-
-    public static Specification<Product> createSpecification(ProductFilterDTO dto) {
-        logger.debug("Building specification for filters: {}", dto);
+    public static Specification<Product> createSpecification(ProductFilterDTO filter) {
         Specification<Product> specs = Specification.allOf();
-        if(dto.name() != null && !dto.name().isBlank()) {
-            logger.trace("Applying filter: name LIKE '{}'", dto.name());
-            specs = specs.and(nameLike(dto.name()));
+        if(filter.name() != null && !filter.name().isBlank()) {
+            specs = specs.and(nameLike(filter.name()));
         }
-        if(dto.minPrice() != null) {
-            logger.trace("Applying filter: price >= '{}'", dto.minPrice());
-            specs = specs.and(priceGreaterThanOrEqualTo(dto.minPrice()));
+        if(filter.minPrice() != null) {
+            specs = specs.and(priceGreaterThanOrEqualTo(filter.minPrice()));
         }
-        if(dto.maxPrice() != null) {
-            logger.trace("Applying filter: price <= '{}'", dto.maxPrice());
-            specs = specs.and(priceLessThanOrEqualTo(dto.maxPrice()));
+        if(filter.maxPrice() != null) {
+            specs = specs.and(priceLessThanOrEqualTo(filter.maxPrice()));
         }
-        if(dto.minStock() != null) {
-            logger.trace("Applying filter: stock >= '{}'", dto.minStock());
-            specs = specs.and(stockGreaterThanOrEqualTo(dto.minStock()));
+        if(filter.minStock() != null) {
+            specs = specs.and(stockGreaterThanOrEqualTo(filter.minStock()));
         }
-        if(dto.maxStock() != null) {
-            logger.trace("Applying filter: stock <= '{}'", dto.maxStock());
-            specs = specs.and(stockLessThanOrEqualTo(dto.maxStock()));
+        if(filter.maxStock() != null) {
+            specs = specs.and(stockLessThanOrEqualTo(filter.maxStock()));
         }
-        if(dto.categoryId() != null) {
-            logger.trace("Applying filter: categoryId = '{}'", dto.categoryId());
-            specs = specs.and(categoryEquals(dto.categoryId()));
+        if(filter.categoryId() != null) {
+            specs = specs.and(categoryEquals(filter.categoryId()));
         }
         return specs;
     }

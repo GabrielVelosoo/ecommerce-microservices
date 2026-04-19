@@ -7,8 +7,8 @@ import io.github.gabrielvelosoo.productservice.application.usecase.category.Cate
 import io.github.gabrielvelosoo.productservice.application.validator.custom.CategoryValidator;
 import io.github.gabrielvelosoo.productservice.domain.entity.Category;
 import io.github.gabrielvelosoo.productservice.domain.service.CategoryService;
-import io.github.gabrielvelosoo.productservice.infrastructure.exception.BusinessException;
-import io.github.gabrielvelosoo.productservice.infrastructure.exception.RecordNotFoundException;
+import io.github.gabrielvelosoo.productservice.application.exception.BusinessException;
+import io.github.gabrielvelosoo.productservice.application.exception.RecordNotFoundException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

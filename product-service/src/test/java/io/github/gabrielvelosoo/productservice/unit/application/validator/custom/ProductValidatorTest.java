@@ -4,7 +4,7 @@ import io.github.gabrielvelosoo.productservice.application.validator.custom.Prod
 import io.github.gabrielvelosoo.productservice.domain.entity.Category;
 import io.github.gabrielvelosoo.productservice.domain.entity.Product;
 import io.github.gabrielvelosoo.productservice.infrastructure.persistence.repository.CategoryRepository;
-import io.github.gabrielvelosoo.productservice.infrastructure.exception.RecordNotFoundException;
+import io.github.gabrielvelosoo.productservice.application.exception.RecordNotFoundException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

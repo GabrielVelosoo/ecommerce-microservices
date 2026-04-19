@@ -2,7 +2,7 @@ package io.github.gabrielvelosoo.productservice.unit.infrastructure.service;
 
 import io.github.gabrielvelosoo.productservice.domain.entity.Product;
 import io.github.gabrielvelosoo.productservice.infrastructure.persistence.repository.ProductRepository;
-import io.github.gabrielvelosoo.productservice.infrastructure.exception.RecordNotFoundException;
+import io.github.gabrielvelosoo.productservice.application.exception.RecordNotFoundException;
 import io.github.gabrielvelosoo.productservice.infrastructure.service.ProductServiceImpl;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

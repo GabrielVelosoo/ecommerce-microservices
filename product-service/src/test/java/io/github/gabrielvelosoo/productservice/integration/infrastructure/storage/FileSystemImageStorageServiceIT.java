@@ -1,7 +1,7 @@
 package io.github.gabrielvelosoo.productservice.integration.infrastructure.storage;
 
 import io.github.gabrielvelosoo.productservice.domain.service.ImageStorageService;
-import io.github.gabrielvelosoo.productservice.infrastructure.storage.FileSystemImageStorageService;
+import io.github.gabrielvelosoo.productservice.infrastructure.service.FileSystemImageStorageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

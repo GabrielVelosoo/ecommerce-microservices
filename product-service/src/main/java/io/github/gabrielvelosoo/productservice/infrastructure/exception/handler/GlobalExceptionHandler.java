@@ -1,8 +1,8 @@
 package io.github.gabrielvelosoo.productservice.infrastructure.exception.handler;
 
-import io.github.gabrielvelosoo.productservice.infrastructure.exception.BusinessException;
-import io.github.gabrielvelosoo.productservice.infrastructure.exception.DuplicateRecordException;
-import io.github.gabrielvelosoo.productservice.infrastructure.exception.RecordNotFoundException;
+import io.github.gabrielvelosoo.productservice.application.exception.BusinessException;
+import io.github.gabrielvelosoo.productservice.application.exception.DuplicateRecordException;
+import io.github.gabrielvelosoo.productservice.application.exception.RecordNotFoundException;
 import io.github.gabrielvelosoo.productservice.infrastructure.exception.model.ErrorResponse;
 import io.github.gabrielvelosoo.productservice.infrastructure.exception.model.FieldError;
 import io.github.gabrielvelosoo.productservice.infrastructure.exception.model.ValidationErrorResponse;
